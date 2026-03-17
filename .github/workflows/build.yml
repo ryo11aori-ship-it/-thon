@@ -13,109 +13,54 @@ jobs:
           cat << 'EOF' > boot.c
           #include <stdio.h>
           #include <stdlib.h>
-          #include <math.h>
           #include <string.h>
-          void Pb(int b){
-          for(int i=0;i<16384;i++){
-          int c[7];int t=i;
-          for(int j=0;j<7;j++){c[j]=t%4;t/=4;}
-          double v=0;
-          for(int j=0;j<7;j++)v+=c[j]*pow(3.141592653589793,(double)j);
-          if(((int)floor(v)%256)==b){
-          for(int k=0;k<1000;k++)putchar('<');
-          for(int j=6;j>=0;j--){
-          for(int k=0;k<c[j];k++)putchar('+');
-          putchar('<');
-          }
-          putchar('.');
-          for(int j=0;j<7;j++)printf(">[-]");
-          for(int k=0;k<1000;k++)putchar('>');
-          return;
-          }
-          }
-          }
-          void M(int f,int t){
-          if(t>f)for(int i=0;i<t-f;i++)putchar('<');
-          else for(int i=0;i<f-t;i++)putchar('>');
-          }
-          void chk(int vp,int tgt,int fp){
-          M(0,vp);printf("[-");M(vp,5);printf("+");M(5,6);printf("+");M(6,vp);printf("]");
-          M(vp,5);printf("[-");M(5,vp);printf("+");M(vp,5);printf("]");
-          M(5,6);for(int i=0;i<tgt;i++)putchar('-');
-          M(6,fp);printf("+");M(fp,6);printf("[");M(6,fp);printf("[-]");M(fp,6);printf("[-]]");M(6,0);
-          }
-          void ifa(int f1,int f2,int* bl,int bl_len){
-          M(0,f1);printf("[");M(f1,f2);printf("[");M(f2,0);
-          for(int i=0;i<bl_len;i++)Pb(bl[i]);
-          M(0,f2);printf("[-]]");M(f2,f1);printf("[-]]");M(f1,0);
-          }
-          void C_mac(int d0,int d2,int* bl,int bl_len){
-          chk(1,d0,7);chk(3,d2,8);ifa(7,8,bl,bl_len);
-          }
-          int main(int argc,char** argv){
-          if(argc>1&&strcmp(argv[1],"run")==0){
-          int* t=calloc(200000,sizeof(int));
-          int p=9000;
-          char* code=calloc(10000000,1);
-          int len=fread(code,1,10000000,stdin);
-          int* loops=calloc(len,sizeof(int));
-          int* st=calloc(len,sizeof(int));int sp=0;
-          for(int i=0;i<len;i++){
-          if(code[i]=='[')st[sp++]=i;
-          if(code[i]==']'){int start=st[--sp];loops[start]=i;loops[i]=start;}
-          }
+          void P(int* b,int l){for(int i=0;i<l;i++){printf(">>>");for(int j=0;j<b[i];j++)putchar('+');printf(".[-]<<<");}}
+          void G(int a,int* b,int l){printf(">[-]>[-]<<[->+>+<<]>>[-<<+>>]<");for(int i=0;i<a;i++)putchar('-');printf(">+<[>[-]<[-]]>[<");P(b,l);printf(">-]<");}
+          int main(int c,char** v){
+          if(c>2&&strcmp(v[1],"run")==0){
+          FILE* f=fopen(v[2],"r");if(!f)return 1;
+          char* cd=calloc(10000000,1);int len=fread(cd,1,10000000,f);fclose(f);
+          unsigned char* t=calloc(200000,1);int p=9000;
+          int* ls=calloc(len,4);int* st=calloc(len,4);int sp=0;
+          for(int i=0;i<len;i++){if(cd[i]=='[')st[sp++]=i;if(cd[i]==']'){int s=st[--sp];ls[s]=i;ls[i]=s;}}
           for(int pc=0;pc<len;pc++){
-          char c=code[pc];
-          if(c=='>')p--;
-          else if(c=='<')p++;
-          else if(c=='+')t[p]=(t[p]+1)%4;
-          else if(c=='-')t[p]=(t[p]+3)%4;
-          else if(c=='.'){
-          double v=0;
-          for(int i=0;i<200000;i++)if(t[i])v+=t[i]*pow(3.141592653589793,(double)(i-10000));
-          putchar((int)floor(v)%256);
-          }
-          else if(c==','){
-          int ch=getchar();
-          if(ch!=EOF){t[p]=1;t[p+1]=ch%4;t[p+2]=(ch/4)%4;t[p+3]=(ch/16)%4;}
-          else t[p]=0;
-          }
-          else if(c=='['&&t[p]==0)pc=loops[pc];
-          else if(c==']'&&t[p]!=0)pc=loops[pc];
-          }
-          return 0;
+          char x=cd[pc];
+          if(x=='>')p++;else if(x=='<')p--;else if(x=='+')t[p]++;else if(x=='-')t[p]--;
+          else if(x=='.')putchar(t[p]);else if(x==','){int ch=getchar();t[p]=(ch==EOF)?0:ch;}
+          else if(x=='['&&t[p]==0)pc=ls[pc];else if(x==']'&&t[p]!=0)pc=ls[pc];
+          }return 0;
           }
           int eh[]={127,69,76,70,2,1,1,0,0,0,0,0,0,0,0,0,2,0,62,0,1,0,0,0,120,0,64,0,0,0,0,0,64,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,64,0,56,0,1,0,64,0,0,0,0,0,1,0,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,64,0,0,0,0,0,0,0,64,0,0,0,0,0,0,16,0,0,0,0,0,0,0,0,0,16,0,0,0,0,0,0,0,16,0,0,0,0,0,0,73,199,194,0,128,64,0};
-          int b_add[64]={15,31,68,0,0,65,254,2};for(int i=8;i<64;i++)b_add[i]=144;
-          int b_sub[64]={15,31,68,0,0,65,254,10};for(int i=8;i<64;i++)b_sub[i]=144;
-          int b_rgt[64]={15,31,68,0,0,73,255,194};for(int i=8;i<64;i++)b_rgt[i]=144;
-          int b_lft[64]={15,31,68,0,0,73,255,202};for(int i=8;i<64;i++)b_lft[i]=144;
-          int b_out[64]={15,31,68,0,0,184,1,0,0,0,191,1,0,0,0,76,137,214,186,1,0,0,0,15,5};for(int i=25;i<64;i++)b_out[i]=144;
-          int b_in[64]={15,31,68,0,0,49,192,49,255,76,137,214,186,1,0,0,0,15,5};for(int i=19;i<64;i++)b_in[i]=144;
-          int b_lbr[64]={15,31,68,0,91,65,128,58,0,117,53,72,141,5,238,255,255,255,65,187,1,0,0,0,72,131,192,64,128,120,4,91,117,3,65,255,195,128,120,4,93,117,3,65,255,203,69,133,219,117,229,255,224};for(int i=53;i<64;i++)b_lbr[i]=144;
-          int b_rbr[64]={15,31,68,0,93,65,128,58,0,116,53,72,141,5,238,255,255,255,65,187,1,0,0,0,72,131,232,64,128,120,4,93,117,3,65,255,195,128,120,4,91,117,3,65,255,203,69,133,219,117,229,255,224};for(int i=53;i<64;i++)b_rbr[i]=144;
-          int b_ext[11]={184,60,0,0,0,65,15,182,58,15,5};
-          for(int i=0;i<sizeof(eh)/sizeof(int);i++)Pb(eh[i]);
+          int b1[64]={15,31,68,0,0,65,254,2};for(int i=8;i<64;i++)b1[i]=144;
+          int b2[64]={15,31,68,0,0,65,254,10};for(int i=8;i<64;i++)b2[i]=144;
+          int b3[64]={15,31,68,0,0,73,255,194};for(int i=8;i<64;i++)b3[i]=144;
+          int b4[64]={15,31,68,0,0,73,255,202};for(int i=8;i<64;i++)b4[i]=144;
+          int b5[64]={15,31,68,0,0,184,1,0,0,0,191,1,0,0,0,76,137,214,186,1,0,0,0,15,5};for(int i=25;i<64;i++)b5[i]=144;
+          int b6[64]={15,31,68,0,0,49,192,49,255,76,137,214,186,1,0,0,0,15,5};for(int i=19;i<64;i++)b6[i]=144;
+          int b7[64]={15,31,68,0,91,65,128,58,0,117,53,72,141,5,238,255,255,255,65,187,1,0,0,0,72,131,192,64,128,120,4,91,117,3,65,255,195,128,120,4,93,117,3,65,255,203,69,133,219,117,229,255,224};for(int i=53;i<64;i++)b7[i]=144;
+          int b8[64]={15,31,68,0,93,65,128,58,0,116,53,72,141,5,238,255,255,255,65,187,1,0,0,0,72,131,232,64,128,120,4,93,117,3,65,255,195,128,120,4,91,117,3,65,255,203,69,133,219,117,229,255,224};for(int i=53;i<64;i++)b8[i]=144;
+          int ex[11]={184,60,0,0,0,65,15,182,58,15,5};
+          for(int i=0;i<120;i++){printf(">");for(int j=0;j<eh[i];j++)putchar('+');printf(".[-]<");}
           printf(",[");
-          C_mac(3,2,b_add,64);C_mac(1,2,b_sub,64);C_mac(2,3,b_rgt,64);C_mac(0,3,b_lft,64);
-          C_mac(2,2,b_out,64);C_mac(0,2,b_in,64);C_mac(3,1,b_lbr,64);C_mac(1,1,b_rbr,64);
+          G(43,b1,64);G(45,b2,64);G(62,b3,64);G(60,b4,64);G(46,b5,64);G(44,b6,64);G(91,b7,64);G(93,b8,64);
           printf(",]");
-          for(int i=0;i<11;i++)Pb(b_ext[i]);
+          for(int i=0;i<11;i++){printf(">");for(int j=0;j<ex[i];j++)putchar('+');printf(".[-]<");}
           return 0;
           }
           EOF
           gcc boot.c -o boot.exe -lm
-          
+
       - name: 1. Generate The Original Source (compiler.π)
         run: ./boot.exe > compiler.π
         
       - name: 2. Bootstrapping Stage 1 (boot.exe -> compiler_v1.exe)
+        # boot.exe が「ファイルから」コードを読み込むことでパイプの食い合いを完全に解決！
         run: |
-          cat compiler.π | ./boot.exe run > compiler_v1.exe
+          cat compiler.π | ./boot.exe run compiler.π > compiler_v1.exe
           chmod +x compiler_v1.exe
           
       - name: 3. Self-Hosting Stage 2 (compiler_v1.exe -> compiler_v2.exe)
-        # ここから先はCのインタプリタに頼らず、吐き出された生のELFバイナリが自己コンパイルを行います
+        # C言語の介入は終わり。ここから生の機械語が自らをコンパイルします。
         run: |
           cat compiler.π | ./compiler_v1.exe > compiler_v2.exe
           chmod +x compiler_v2.exe
@@ -139,7 +84,7 @@ jobs:
           fi
           
       - name: 6. Build the REPL executable (repl.exe)
-        # ,[.,] は無限に入力を受け取り出力し続けるエコーREPLのπthonソースコードです
+        # ,[.,] をコンパイルし、他言語依存ゼロの対話型エコーREPLを錬成！
         run: |
           echo -n ',[.,]' > repl.π
           cat repl.π | ./compiler_v3.exe > repl.exe
