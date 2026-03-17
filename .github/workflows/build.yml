@@ -29,9 +29,9 @@ jobs:
       - name: 3. Compile Test Program (.π) to Raw ELF Binary
         # compiler_native.exe が program.π を直接コンパイルし、Raw Binary (repl.exe) を生成！
         run: |
-          echo -n '+-><' > program.π
+          echo -n '+++++++[>++++++<-]>' > program.π
           cat program.π | ./compiler_native.exe > repl.exe
-          
+
       - name: 4. Execute Native Binary (Zero Dependencies)
         run: |
           chmod +x repl.exe
