@@ -15,7 +15,8 @@ jobs:
         run: gcc pi_out.c -o pithon.exe -lm
         
       - name: Execute πthon
-        run: echo '+-><' | ./pithon.exe
+        run: echo -n '+-><.,[]' | ./pithon.exe
+
         
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
