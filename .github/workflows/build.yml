@@ -1,4 +1,4 @@
-name: πthon Build
+name: πthon True Self-Hosting Build
 
 on: [push]
 
@@ -8,18 +8,44 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Run πthon Transpiler
-        run: python πthon.py
+      - name: 0. Build Stage 0 Transpiler
+        run: |
+          python πthon.py
+          gcc pi_out.c -o pithon.exe -lm
+          
+      - name: 1. Generate compiler.π (The Raw ELF Emitter)
+        run: python build_compiler.py
         
-      - name: Compile C Code
-        run: gcc pi_out.c -o pithon.exe -lm
-        
-      - name: Execute πthon
-        run: echo -n '+-><.,[]' | ./pithon.exe
-
-        
+      - name: 2. Compile compiler.π to Native via Stage 0
+        # 巨大なπthonコードをコンパイルして実行環境でラップします
+        run: |
+          echo "#include <stdio.h>" > compiler_native.c
+          echo "#include <math.h>" >> compiler_native.c
+          echo "int main(){int t[20000]={0}; int p=9000; int ch;" >> compiler_native.c
+          cat compiler.π | ./pithon.exe >> compiler_native.c
+          echo "return 0;}" >> compiler_native.c
+          gcc compiler_native.c -o compiler_native.exe -lm
+          
+      - name: 3. Compile Test Program (.π) to Raw ELF Binary
+        # compiler_native.exe が program.π を直接コンパイルし、Raw Binary (repl.exe) を生成！
+        run: |
+          echo -n '+-><' > program.π
+          cat program.π | ./compiler_native.exe > repl.exe
+          
+      - name: 4. Execute Native Binary (Zero Dependencies)
+        run: |
+          chmod +x repl.exe
+          ./repl.exe || RET=$?
+          echo "Binary exited with code: $RET"
+          if [ "$RET" -eq 42 ]; then
+            echo "SUCCESS: The Pi has reached absolute transcendence!"
+          else
+            echo "FAILURE: Exit code was not 42"
+            exit 1
+          fi
+          
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: pithon-executable
-          path: pithon.exe
+          name: repl-executable
+          path: repl.exe
