@@ -1,19 +1,21 @@
 import math, itertools
-# The Pi Evaluator for Hex Streams
+
 P_b = lambda bl: "".join("<"*1000 + "".join("+"*v+"<" for v in c) + "." + ">[-]"*7 + ">"*1000 for b in bl for c in [next(c for c in itertools.product(range(4),repeat=7) if int(math.floor(sum(v*(math.pi**k) for k,v in enumerate(c))))%256==b)])
 
-# ELF64 Header (RWX Memory + Entry Point Setup)
-eh = [127,69,76,70,2,1,1,0,0,0,0,0,0,0,0,0,2,0,62,0,1,0,0,0,120,0,64,0,0,0,0,0,64,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,64,0,56,0,1,0,64,0,0,0,0,0,1,0,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,64,0,0,0,0,0,0,0,64,0,0,0,0,0,0,16,0,0,0,0,0,0,0,0,0,16,0,0,0,0,0,0,0,16,0,0,0,0,0,0]
+M = lambda f, t: "<"*(t-f) if t>f else ">"*(f-t)
+chk = lambda vp, tgt, fp: M(0, vp) + "[-" + M(vp, 5) + "+" + M(5, 6) + "+" + M(6, vp) + "]" + M(vp, 5) + "[-" + M(5, vp) + "+" + M(vp, 5) + "]" + M(5, 6) + "-"*tgt + M(6, fp) + "+" + M(fp, 6) + "[" + M(6, fp) + "[-]" + M(fp, 6) + "[-]]" + M(6, 0)
+ifa = lambda f1, f2, bl: M(0, f1) + "[" + M(f1, f2) + "[" + M(f2, 0) + P_b(bl) + M(0, f2) + "[-]]" + M(f2, f1) + "[-]]" + M(f1, 0)
+C = lambda d0, d2, bl: chk(1, d0, 7) + chk(3, d2, 8) + ifa(7, 8, bl)
 
-# Fixed-Stride Machine Code Blocks
-# [+] inc byte [r12] | [-] dec byte [r12] | [>] inc r12 | [<] dec r12
-blk_add = P_b([43, 65, 254, 3, 144, 144, 144, 144, 144, 144, 144, 144, 144, 144, 144, 144])
-blk_sub = P_b([45, 65, 254, 11, 144, 144, 144, 144, 144, 144, 144, 144, 144, 144, 144, 144])
-blk_rgt = P_b([62, 73, 255, 196, 144, 144, 144, 144, 144, 144, 144, 144, 144, 144, 144, 144])
-blk_lft = P_b([60, 73, 255, 204, 144, 144, 144, 144, 144, 144, 144, 144, 144, 144, 144, 144])
+eh = [127,69,76,70, 2,1,1,0, 0,0,0,0, 0,0,0,0, 2,0,62,0, 1,0,0,0, 120,0,64,0, 0,0,0,0, 64,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 64,0,56,0, 1,0,64,0, 0,0,0,0, 1,0,0,0, 7,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,64,0, 0,0,0,0, 0,0,64,0, 0,0,0,0, 0,16,0,0, 0,0,0,0, 0,0,1,0, 0,0,0,0, 0,16,0,0, 0,0,0,0, 73,199,194,0,16,64,0, 77,49,246]
 
-# Ouroboros Generator Pipeline (Generating compiler.π)
-# This compiler.π will independently output ELF -> read stream -> map 8 commands -> output native binary!
-code = P_b(eh) + ",[<" + blk_add + ">]" # Simplified to demonstrate the fixed-stride mapping
+b_add = [43, 65, 254, 3, 144, 144, 144, 144, 144, 144, 144, 144, 144, 144, 144, 144]
+b_sub = [45, 65, 254, 11, 144, 144, 144, 144, 144, 144, 144, 144, 144, 144, 144, 144]
+b_rgt = [62, 73, 255, 196, 144, 144, 144, 144, 144, 144, 144, 144, 144, 144, 144, 144]
+b_lft = [60, 73, 255, 204, 144, 144, 144, 144, 144, 144, 144, 144, 144, 144, 144, 144]
+b_exit = [184, 60, 0, 0, 0, 191, 42, 0, 0, 0, 15, 5]
+
+code = P_b(eh) + ",[" + C(3,2,b_add) + C(1,2,b_sub) + C(2,3,b_rgt) + C(0,3,b_lft) + ",]" + P_b(b_exit)
+
 open("compiler.π","w").write(code)
-print("SUCCESS: Zero-Dependency Polyglot Compiler Generated!")
+print("SUCCESS: Full 4-Command Polyglot Compiler Generated!")
