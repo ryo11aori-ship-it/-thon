@@ -2,9 +2,9 @@ import math, itertools
 
 P = lambda text: "".join("".join("+"*v+"<" for v in c)+"."+">[-]"*7 for c in [next(c for c in itertools.product(range(4),repeat=7) if int(math.floor(sum(v*(math.pi**k) for k,v in enumerate(c))))%256==ord(char)) for char in text])
 
-C = lambda tgt,txt: ">[-]>[-]<<[>+>+<<-]>>[<<+>>-]<"+"+"*((4-tgt)%4)+">+<[>-<[-]]>[[-]>>>>>>>>>>"+P(txt)+"<<<<<<<<<<]<<"
+C = lambda tgt,txt: ">>>>[-]>[-]>[-]<<<<<<[>>>>+>+<<<<<-]>>>>>[<<<<<+>>>>>-]<"+"+"*((4-tgt)%4)+">>+<<[>>-<<[-]]>>[[-]<"+"<"*105+P(txt)+">"*106+"]<<<<<<"
 
-code = ",[" + C(3,"t[p]++;") + C(1,"t[p]--;") + C(2,"p--;") + C(0,"p++;") + ",]"
+code = ">"*100 + ",[" + C(3,"t[p]++;") + C(1,"t[p]--;") + C(2,"p--;") + C(0,"p++;") + ",]"
 
 c_src = ["#include <stdio.h>\n#include <math.h>\nint main(){int t[20000]={0}; int p=10000; int ch;"]
 
@@ -16,4 +16,4 @@ f = open("pi_out.c", "w")
 f.write("\n".join(c_src))
 f.close()
 
-print("SUCCESS: The Ultimate πthon Compiler Generated!")
+print("SUCCESS: The Output-Safe πthon Compiler Generated!")
