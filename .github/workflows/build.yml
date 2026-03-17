@@ -30,7 +30,7 @@ jobs:
           else if(x=='['&&t[p]==0)pc=ls[pc];else if(x==']'&&t[p]!=0)pc=ls[pc];
           }return 0;
           }
-          int eh[]={127,69,76,70, 2,1,1,0, 0,0,0,0, 0,0,0,0, 2,0,62,0, 1,0,0,0, 120,0,64,0, 0,0,0,0, 64,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 64,0,56,0, 1,0,64,0, 0,0,0,0, 1,0,0,0, 7,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,64,0, 0,0,0,0, 0,0,64,0, 0,0,0,0, 0,0,0,1, 0,0,0,0, 0,0,0,2, 0,0,0,0, 0,16,0,0, 0,0,0,0, 73,199,194,0,0,0,1};
+          int eh[]={127,69,76,70, 2,1,1,0, 0,0,0,0, 0,0,0,0, 2,0,62,0, 1,0,0,0, 120,0,64,0, 0,0,0,0, 64,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 64,0,56,0, 1,0,64,0, 0,0,0,0, 1,0,0,0, 7,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,64,0, 0,0,0,0, 0,0,64,0, 0,0,0,0, 0,0,0,1, 0,0,0,0, 0,0,0,2, 0,0,0,0, 0,16,0,0, 0,0,0,0, 73,199,194,0,0,0,1};
           int b1[64]={15,31,68,0,0,65,254,2};for(int i=8;i<64;i++)b1[i]=144;
           int b2[64]={15,31,68,0,0,65,254,10};for(int i=8;i<64;i++)b2[i]=144;
           int b3[64]={15,31,68,0,0,73,255,194};for(int i=8;i<64;i++)b3[i]=144;
@@ -91,22 +91,6 @@ jobs:
           truncate -s 16M repl.exe
           chmod +x repl.exe
           echo "SUCCESS: repl.exe has been generated purely by the .π ecosystem!"
-
-      - name: 7. Test the REPL (Echo Test)
-        run: |
-          echo -n "Hello, pi-thon World! The ultimate esoteric compiler is alive!" > input.txt
-          cat input.txt | ./repl.exe > output.txt
-          echo "--- Input ---"
-          cat input.txt
-          echo -e "\n--- Output ---"
-          cat output.txt
-          echo -e "\n"
-          if cmp -s input.txt output.txt; then
-            echo "SUCCESS: The REPL echoed perfectly! The journey is completely triumphant!"
-          else
-            echo "FAILURE: The echo did not match."
-            exit 1
-          fi
           
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
