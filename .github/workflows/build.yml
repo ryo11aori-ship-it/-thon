@@ -15,7 +15,7 @@ jobs:
           #include <stdlib.h>
           #include <string.h>
           void P(int* b,int l){for(int i=0;i<l;i++){printf(">>>");for(int j=0;j<b[i];j++)putchar('+');printf(".[-]<<<");}}
-          void G(int a,int* b,int l){printf(">[-]>[-]<<[->+>+<<]>>[-<<+>>]<");for(int i=0;i<a;i++)putchar('-');printf(">+<[>[-]<[-]]>[<");P(b,l);printf(">-]<");}
+          void G(int a,int* b,int l){printf(">[-]>[-]<<[->+>+<<]>>[-<<+>>]<");for(int i=0;i<a;i++)putchar('-');printf(">+<[>[-]<[-]]>[<");P(b,l);printf(">-]<<");}
           int main(int c,char** v){
           if(c>2&&strcmp(v[1],"run")==0){
           FILE* f=fopen(v[2],"r");if(!f)return 1;
@@ -40,7 +40,7 @@ jobs:
           int b7[64]={15,31,68,0,91,65,128,58,0,117,53,72,141,5,238,255,255,255,65,187,1,0,0,0,72,131,192,64,128,120,4,91,117,3,65,255,195,128,120,4,93,117,3,65,255,203,69,133,219,117,229,255,224};for(int i=53;i<64;i++)b7[i]=144;
           int b8[64]={15,31,68,0,93,65,128,58,0,116,53,72,141,5,238,255,255,255,65,187,1,0,0,0,72,131,232,64,128,120,4,93,117,3,65,255,195,128,120,4,91,117,3,65,255,203,69,133,219,117,229,255,224};for(int i=53;i<64;i++)b8[i]=144;
           int ex[11]={184,60,0,0,0,65,15,182,58,15,5};
-          for(int i=0;i<120;i++){printf(">");for(int j=0;j<eh[i];j++)putchar('+');printf(".[-]<");}
+          for(int i=0;i<sizeof(eh)/sizeof(int);i++){printf(">");for(int j=0;j<eh[i];j++)putchar('+');printf(".[-]<");}
           printf(",[");
           G(43,b1,64);G(45,b2,64);G(62,b3,64);G(60,b4,64);G(46,b5,64);G(44,b6,64);G(91,b7,64);G(93,b8,64);
           printf(",]");
@@ -54,13 +54,11 @@ jobs:
         run: ./boot.exe > compiler.π
         
       - name: 2. Bootstrapping Stage 1 (boot.exe -> compiler_v1.exe)
-        # boot.exe が「ファイルから」コードを読み込むことでパイプの食い合いを完全に解決！
         run: |
           cat compiler.π | ./boot.exe run compiler.π > compiler_v1.exe
           chmod +x compiler_v1.exe
           
       - name: 3. Self-Hosting Stage 2 (compiler_v1.exe -> compiler_v2.exe)
-        # C言語の介入は終わり。ここから生の機械語が自らをコンパイルします。
         run: |
           cat compiler.π | ./compiler_v1.exe > compiler_v2.exe
           chmod +x compiler_v2.exe
@@ -84,7 +82,6 @@ jobs:
           fi
           
       - name: 6. Build the REPL executable (repl.exe)
-        # ,[.,] をコンパイルし、他言語依存ゼロの対話型エコーREPLを錬成！
         run: |
           echo -n ',[.,]' > repl.π
           cat repl.π | ./compiler_v3.exe > repl.exe
