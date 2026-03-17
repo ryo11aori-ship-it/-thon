@@ -1,0 +1,1 @@
+{"name":"πthon Build","on":["push"],"jobs":{"build":{"runs-on":"ubuntu-latest","steps":[{"uses":"actions/checkout@v4"},{"name":"Run πthon Transpiler","run":"python πthon.py"},{"name":"Compile C Code","run":"gcc pi_out.c -o pithon.exe -lm"},{"name":"Upload Artifact","uses":"actions/upload-artifact@v4","with":{"name":"pithon-executable","path":"pithon.exe"}}]}}}
