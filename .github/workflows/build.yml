@@ -20,7 +20,7 @@ jobs:
           if(c>2&&strcmp(v[1],"run")==0){
           FILE* f=fopen(v[2],"r");if(!f)return 1;
           char* cd=calloc(10000000,1);int len=fread(cd,1,10000000,f);fclose(f);
-          unsigned char* t=calloc(200000,1);int p=9000;
+          unsigned char* t=calloc(2000000,1);int p=90000;
           int* ls=calloc(len,4);int* st=calloc(len,4);int sp=0;
           for(int i=0;i<len;i++){if(cd[i]=='[')st[sp++]=i;if(cd[i]==']'){int s=st[--sp];ls[s]=i;ls[i]=s;}}
           for(int pc=0;pc<len;pc++){
@@ -30,7 +30,7 @@ jobs:
           else if(x=='['&&t[p]==0)pc=ls[pc];else if(x==']'&&t[p]!=0)pc=ls[pc];
           }return 0;
           }
-          int eh[]={127,69,76,70,2,1,1,0,0,0,0,0,0,0,0,0,2,0,62,0,1,0,0,0,120,0,64,0,0,0,0,0,64,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,64,0,56,0,1,0,64,0,0,0,0,0,1,0,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,64,0,0,0,0,0,0,0,64,0,0,0,0,0,0,16,0,0,0,0,0,0,0,0,0,16,0,0,0,0,0,0,0,16,0,0,0,0,0,0,73,199,194,0,128,64,0};
+          int eh[]={127,69,76,70, 2,1,1,0, 0,0,0,0, 0,0,0,0, 2,0,62,0, 1,0,0,0, 120,0,64,0, 0,0,0,0, 64,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 64,0,56,0, 1,0,64,0, 0,0,0,0, 1,0,0,0, 7,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,64,0, 0,0,0,0, 0,0,64,0, 0,0,0,0, 0,0,0,1, 0,0,0,0, 0,0,0,2, 0,0,0,0, 0,16,0,0, 0,0,0,0, 73,199,194,0,0,0,1};
           int b1[64]={15,31,68,0,0,65,254,2};for(int i=8;i<64;i++)b1[i]=144;
           int b2[64]={15,31,68,0,0,65,254,10};for(int i=8;i<64;i++)b2[i]=144;
           int b3[64]={15,31,68,0,0,73,255,194};for(int i=8;i<64;i++)b3[i]=144;
@@ -56,19 +56,19 @@ jobs:
       - name: 2. Bootstrapping Stage 1 (boot.exe -> compiler_v1.exe)
         run: |
           cat compiler.π | ./boot.exe run compiler.π > compiler_v1.exe
-          truncate -s 8M compiler_v1.exe
+          truncate -s 16M compiler_v1.exe
           chmod +x compiler_v1.exe
           
       - name: 3. Self-Hosting Stage 2 (compiler_v1.exe -> compiler_v2.exe)
         run: |
           cat compiler.π | ./compiler_v1.exe > compiler_v2.exe
-          truncate -s 8M compiler_v2.exe
+          truncate -s 16M compiler_v2.exe
           chmod +x compiler_v2.exe
           
       - name: 4. Self-Hosting Stage 3 (compiler_v2.exe -> compiler_v3.exe)
         run: |
           cat compiler.π | ./compiler_v2.exe > compiler_v3.exe
-          truncate -s 8M compiler_v3.exe
+          truncate -s 16M compiler_v3.exe
           chmod +x compiler_v3.exe
           
       - name: 5. Fixed-Point Verification (SHA-256)
@@ -88,7 +88,7 @@ jobs:
         run: |
           echo -n ',[.,]' > repl.π
           cat repl.π | ./compiler_v3.exe > repl.exe
-          truncate -s 8M repl.exe
+          truncate -s 16M repl.exe
           chmod +x repl.exe
           echo "SUCCESS: repl.exe has been generated purely by the .π ecosystem!"
           
