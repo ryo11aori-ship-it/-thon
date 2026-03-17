@@ -84,13 +84,23 @@ jobs:
             exit 1
           fi
           
-      - name: 6. Build the REPL executable (repl.exe)
+            - name: 6. Build the Universal VM REPL (repl.exe)
         run: |
-          echo -n ',[.,]' > repl.π
+          cat << 'EOF' > repl.π
+          >>>+[[-]>>[-]++>+>+++++++[<++++>>++<-]++>>+>+>+++++[>++>++++++<<-]+>>>,<++[[>[->>]<[>>]<<-]<[<]<+>>[>]>[<+>-<<[<+>-]>]<[[[-]<]++<-[<+++++++++>[<->-]>>]>>]]<<]<]<[[<]>[[>]>>[>>]+[<<]<[<]<+>>-]>[>]+[->>]<<<<[[<<]<[<]+<<[+>+<<-[>-->+<<-[>+<[>>+<<-]]]>[<+>-]<]++>>-->[>]>>[>>]]<<[>>+<[[<]<]>[[<<]<[<]+[-<+>>-[<<+>++>-[<->[<<+>>-]]]<[>+<-]>]>[>]>]>[>>]>>]<<[>>+>>+>>]<<[->>>>>>>>]<<[>.>>>>>>>]<<[>->>>>>]<<[>,>>>]<<[>+>]<<[+<<]<]
+          EOF
           cat repl.π | ./compiler_v3.exe > repl.exe
           truncate -s 16M repl.exe
           chmod +x repl.exe
-          echo "SUCCESS: repl.exe has been generated purely by the .π ecosystem!"
+          echo "SUCCESS: The Universal VM (repl.exe) has been forged!"
+
+      - name: 7. Test the Universal REPL (Hello World)
+        run: |
+          echo -n "+++++++++[>++++++++>+++++++++++>+++++<<<-]>.>++.+++++++..+++.>-.------------.<++++++++.--------.+++.------.--------.>+!" > test_code.txt
+          cat test_code.txt | ./repl.exe > output.txt
+          echo "--- Executing code INSIDE the Native REPL VM ---"
+          cat output.txt
+          echo -e "\n--- Done ---"
           
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
